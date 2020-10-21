@@ -1,0 +1,49 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deploy
+  labels:
+    app: deploy-php-tomcat
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: project-php-tomcat
+  template:
+    metadata:
+      labels:
+        project: project-php-tomcat # PODS label
+    spec:
+      containers:
+        - name: php-web
+          image: alexanderefimov/php:latest
+          ports:
+            - containerPort: 80
+        - name: tomcat-web
+          image: tomcat:8.5.38
+          ports:
+            - containerPort: 8080
+
+# Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: few-images-service
+  labels:
+    env: production
+spec:
+  type: LoadBalancer
+  selector:
+    project: project-php-tomcat
+  ports:
+    - name: php-web-listener
+      protocol: TCP
+      port: 80
+      targetPort: 80
+
+    - name: tomcat-web-listener
+      protocol: TCP
+      port: 8888 
+      targetPort: 8080 # Tomcat POD's port

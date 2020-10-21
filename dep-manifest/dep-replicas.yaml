@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-replicas
+  labels:
+    app: my-php
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: rep
+  template:
+    metadata:
+      labels:
+        project: rep
+    spec:
+      containers:
+        - name: pr-web
+          image: alexanderefimov/php:latest
+          ports:
+            - containerPort: 80

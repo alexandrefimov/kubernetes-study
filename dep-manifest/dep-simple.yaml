@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy1
+  labels:
+    app: php-app
+spec:
+  selector:
+    matchLabels:
+      project: project-php
+  template:
+    metadata:
+      labels:
+        project: project-php
+    spec:
+      containers:
+        - name: container-php
+          image: alexanderefimov/php:latest
+          ports:
+            - containerPort: 80

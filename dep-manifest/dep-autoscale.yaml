@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-autoscale
+  labels:
+    app: my-php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: asc
+  template:
+    metadata:
+      labels:
+        project: asc
+    spec:
+      containers:
+        - name: pr-web
+          image: alexanderefimov/php:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-autoscale
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: dep-autoscale
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 80

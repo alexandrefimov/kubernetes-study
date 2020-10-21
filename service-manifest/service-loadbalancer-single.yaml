@@ -1,0 +1,40 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-dep
+  labels:
+    app: dep-php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: pr-php
+  template:
+    metadata:
+      labels:
+        project: pr-php # PODS label
+    spec:
+      containers:
+        - name: php-web
+          image: alexanderefimov/php:latest
+          ports:
+            - containerPort: 80
+
+# Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-image-service
+  labels:
+    env: production
+spec:
+  selector:
+    project: pr-php # Selecting PODS with label pr-php
+  ports:
+    - name: listener
+      protocol: TCP
+      port: 80 # Port on Load Balancer
+      targetPort: 80 # Port on POD
+  type: LoadBalancer
